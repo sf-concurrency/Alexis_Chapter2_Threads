@@ -72,14 +72,14 @@ What does this mean?
 This sounds worth remembering.
 
 
-### "alien methods"
+### Avoid “alien methods"
 
 > The problem is that updateProgress() calls an alien method--a method it knows nothing about. That method could do anything, including acquiring another lock. If it does, then we’ve acquired two locks without knowing whether we’ve done so in the right order. As we’ve just seen, that can lead to deadlock.
 The only solution is to avoid calling alien methods while holding a lock.
 
 This seems vague.
 
-Better would be to say, “when your thread is holding a lock it should never call a function with unknown behavior, since that function might try to acquire a lock, succeed in acquiring one in the wrong locking order with respect to your thread's lock, and thus produce a deadlock."
+Better would be to say, “when your thread is holding a lock it should never call a function with unknown behavior. That is because that function might try to acquire a lock, succeed in acquiring a lock in the wrong locking order with respect to your thread's lock, and thus produce a deadlock."
 
 ## "Find"
 
