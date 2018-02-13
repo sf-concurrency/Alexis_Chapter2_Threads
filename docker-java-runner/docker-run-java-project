@@ -1,0 +1,36 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ ! -e "$DIR"/Dockerfile-java ]; then
+    echo "error: the script run-java-project needs the file Dockerfile-java in its own directory to run"
+fi
+
+if [ $# -ne 1 ]; then
+    echo "usage: $0 PROJECT_DIRECTORY"
+    echo ""
+    echo "  where PROJECT_DIRECTORY contains a pom.xml"
+    exit 1;
+fi
+
+projectdir="$1"
+
+# build a docker image with java and maven, if needed
+docker build --file "$DIR"/Dockerfile-java --tag sevenconcurrencymodels/java .
+
+cd "$projectdir" || exit 1
+
+# run that image, with a volume mapped to the project directory, and
+# compile and run in that directory 
+#
+# (This probably takes way longer than needed because the java build
+# tool maven is re-installing its bits and pieces every time it's run
+# here. To make it go faster, we'd want to prime maven in the Docker
+# image definition.)
+docker run \
+       -it \
+       --rm \
+       --volume  "$(pwd)":/home \
+       --workdir /home \
+       sevenconcurrencymodels/java:latest \
+       sh -c "echo 'COMPILING the project'; mvn -q compile && echo 'RUNNING the project'; mvn -q exec:java"
+

@@ -1,0 +1,2 @@
+You can use this script in case you want to keep java off your filesystem.
+It install java in a container, and builds and runs within the container.

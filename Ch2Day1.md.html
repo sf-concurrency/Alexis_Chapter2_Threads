@@ -1,0 +1,177 @@
+<meta charset="utf-8">
+
+# SCM: Ch2,Day1
+
+## Reading Notes by AlexisGallagher
+
+by Alexis Gallagher. 2018-02-08T2055
+
+### “thread of control”
+
+Not actually defined in the text.
+
+How does one define this *exactly*? Is there another kind of thread besides a thread of control? The book doesn't actually define it
+
+Seems to mean something like, "a sequence of instructions that will be executed in the same execution context". So perhaps what makes it a thread of "control" is just that a thread is defined by having a single instruction pointer which keeps track of, or controls, the instruction which will be executed next.
+
+### “mutual exclusion”
+
+Not actually defined in the text.
+
+### “race condition”
+
+Not actually defined in the text.
+
+Why is it called a “condition”? Is it a general state of affairs? Is it specific requirement, as in “one condition of my participation is that I get green M&Ms?” Are you “in” one race condition or another, or is the presence of two possibilities itself what defines a race condition?
+
+I've never understood what this means exactly. I checked [the Wikipedia article](https://en.wikipedia.org/wiki/Race_condition), and according to it and [this SO answer](https://stackoverflow.com/a/45498041/577888), the term was supposedly introduced in 1968, in an academic article regarding circuit design, which is pdf page 78 in [this file I found online](resources/ZissosCopperwhite-LogicalDesignManual_text). 
+
+I checked and the paper doesn't use the term "race condition" anywhere. But it seems to talk about "race phenomena," "hazard phenomena," and "race hazards." Oh, well.
+
+### “executes concurrently” = ?
+
+Phrase used, but not actually defined.
+
+The one useful thing I remember about saying that two events or processes happen "concurrently" is that it does not mean that they happen at the same time. Rather I believe it can be understood to mean something more like the following:
+
+- that the time ordering between them is undefined;
+- or equivalently, that the time ordering could turn out to be
+  anything when they are run;
+- or equivalently, that from the perspective of code within the
+  program, there is _actually no fact of the matter_ regarding time
+  ordering.
+
+However, all of the above statements are true only up to the point when the two distinct, incomparable timelines of the processes are brought together and made comparable by a *synchronization primitive* like a lock or something else.
+
+One way to think of it is that, from the point of view of code within a thread, you can compare two moments in that thread and talk about which one came before the other, but *it is not in general meaningful* to talk about whether a moment on this thread is before or after a moment on another thread. You can only talk about this when the two moments are simultaneous because of synchronization primitives, or are ordered by virtue of being on opposite sides of a synchronization primitive.
+
+Then designing concurrent code is not about keeping track of the time ordering of simultaneous processes but, rather, defining processes that live in these mostly totally unrelated timelines, and specifying the few exceptional points at which they do intersect with each other. It's more about breaking a part one process into independent processes, which meet at rare moments, than it is about keeping track of time as such.
+
+I think, but am not sure, that this perspective is valid.
+
+I think I got this idea from [Rob Pike's talk](https://blog.golang.org/concurrency-is-not-parallelism).
+
+### um, what’s a lock?
+
+“Locks, which can be held by only a single thread at a time”
+
+### “synchronize”
+
+What does this mean?
+
+> The solution is to *synchronize* access to count. One way to do so is to use the *intrinsic lock* that comes built into every Java object (you’ll sometimes hear it referred to as a *mutex*, *monitor*, or *critical section*) by making increment() synchronized:
+
+
+## "Find"
+
+1. Check out William Pugh’s “Java memory model” website.
+   
+This is background material on the discovery of the flaws in the original JVM and its revision.
+
+2. Acquaint yourself with the JSR 133 (Java memory model) FAQ.
+
+To quote:
+
+>  The proposed specification describes the semantics of threads, locks, volatile variables and data races. This includes what has been referred to as the Java memory model.
+
+>  The specification is expected to revise substantially Chapter 17 of "The Java Language Specification" and Chapter 8 of "The Java Virtual Machine Specification". It is not expected to result in changes to existing APIs, but might clarify the semantics of some existing methods in java.lang.Thread and java.lang.Object (java.lang.Object defines the wait and join methods).
+
+Seems like this was a catch-up to specify undefined semantics around threading and locks, notably, to clarify where the compiler is free to re-order statements, where it guarantees valuels will be fully initialized, when changes made from one thread will be visible from another, etc..
+
+This seems like all the stuff not yet quite specified in Swift.
+
+3a. What guarantees does the Java memory model make regarding initialization safety? 
+   
+You don't need to explicitly synchronize, if you initiaze all final vars in the constructor. (Is it the same in Swift?)
+
+3b. Is it always necessary to use locks to safely publish objects between threads?
+
+    ????
+
+4. What is the double-checked locking anti-pattern? Why is it an anti-pattern?
+
+Seems like this was a voodoo cargo cult attempt to ensure threadsafe code before the JVM community nailed down the language spec.
+
+## Do: Dining Philosophers
+
+> Experiment with the original, broken “dining philosophers” example. Try modifying the length of time that philosophers think and eat and the number of philosophers. What effect does this have on how long it takes until deadlock? Imagine that you were trying to debug this and wanted to increase the likelihood of reproducing the deadlock— what would you do?
+
+###  findings
+
+MTTD = mean time till deadlock.
+
+###   number of philosophser
+     
+fewer philosopher =>  smaller MTTD.
+
+###   thinktime and eattime
+     
+reducing both thinkTime and eatTime by the same proportion => smaller MTTD
+
+this just speeds up time.
+
+###   thinktime vs eattime
+
+thinkTime > eatTime => bigger MTTD
+
+thinkTime < eatTime => smaller MTTD
+
+the higher (eatTime / thinkTime), the greater the fraction of the time that that the scarce resources (Chopstickis, i.e., locks) are unavailable.
+
+## Setup instructions
+
+Worked for me:
+```
+# Install maven, the java build tool
+brew install maven
+```
+
+## Minidemoes and miniprojects
+
+### minidemo: Cocoa counterpart to java.lang.Thread
+
+NSThread
+
+Thread.run -> NSThread.??
+Thread.start
+Thread.yield -> ??
+Thread.join
+
+How are its semantics different?
+
+### minidemo: HelloWorld.java in Swift
+
+### minidemo: Counting.java in Swift
+
+### microdemo: example of "visibility" in Swift?
+
+## Related Resources
+
+### Book website
+
+https://pragprog.com/book/pb7con/seven-concurrency-models-in-seven-weeks
+
+### Podcast episode on threads
+
+Andrew Pontious and Wolf Renzsch recorded an interesting discussion of threads vs other concurrency primitives
+
+http://pca.st/episode/269ee740-16a3-0131-6d23-723c91aeae46
+
+### book: Java Concurrency in Practice
+
+Supposed to be a classic
+
+### minidemo: llvm decompile of `increment` to show read-modify-write
+
+### what statement re-orderings does Swift reserve the right to do?
+
+### Lattner's concurrency note
+
+Chriss Lattner wrote a [note on concurrency in Swift](https://gist.github.com/lattner/31ed37682ef1576b16bca1432ea9f782).
+
+### Notes on the damn JDK
+
+https://docs.docker.com/samples/library/openjdk/#start-a-java-instance-in-your-app
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

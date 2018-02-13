@@ -1,0 +1,19 @@
+#!/bin/bash
+
+type mvn >/dev/null 2>&1 || { echo >&2 "I require mvn but it's not installed.  Aborting. Please try 'brew install maven'"; exit 1; }
+
+if [ $# -ne 1 ]; then
+    echo "usage: run-java-project PROJECT_DIRECTORY"
+    echo ""
+    echo "  where PROJECT_DIRECTORY contains a pom.xml"
+    exit 1;
+fi
+
+projectdir="$1"
+
+cd "$projectdir" || exit 1
+
+echo 'COMPILING the project'
+mvn --quiet compile
+echo 'RUNNING the project'
+mvn --quiet exec:java

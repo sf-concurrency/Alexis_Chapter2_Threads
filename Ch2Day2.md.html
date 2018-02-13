@@ -1,0 +1,145 @@
+<meta charset="utf-8">
+
+# SCM: Ch2,Day2
+
+## Reading Notes by AlexisGallagher
+
+
+### Notes on ReentrantLock
+
+Java API docs:
+
+> A reentrant mutual exclusion Lock with the same basic behavior and
+> semantics as the implicit monitor lock accessed using synchronized
+> methods and statements, but with extended capabilities.
+
+(In general, a re-entrant lock is just a lock that can be acquired
+multiple times by the same thread without deadlocking on itself. If
+the lock were not re-entrant, it would deadlock on itself, because it
+would not be able to acquire the lock the second time since it had not
+released it from the first time.)
+
+Some notes on how ReentrantLock differs from the "implicit monitor
+lock" attached to every object:
+
+- can be locked/unlocked from different methods. Since they are not
+  locked and unlocked by the beginning and ending of a `synchronized`
+  block, they are not restricted to being
+- thread can timeout while waiting to acquire lock
+- thread can be interrupted while waiting to acquire lock
+- include a condition variable with a (signal/wait) mechanism.
+
+### Notes on condition variables
+
+Literally, a condition variable is an actual variable in the program
+text. Conceptually, it is a mechanism used for communicating from one
+thread to one or more other threads, to wake them once a condition has
+been met. The literal variable is used to support this mechanism.
+
+To recap the confusables:
+
+- the actual *condition variable* appears in the program code, merely
+  to be used as an argument for the `wait`, `signal`, and `signalAll` (aka, `broadcast`) functions. It
+  does not embody or contain the logical condition.
+
+- the *logical condition* is a logical condition defined and managed
+  by the program. When it is false, threads should call `wait` on the
+  condition variable. When it becomes true, a thread should call
+  `signal` in order to wake up the waiting threads.
+
+- Every condition variable operation must be performed while a *mutex
+  lock* is locked. Why? This ensures atomicity of testing the
+  condition and calling wait, and of testing the condition and
+  calling signal.
+
+Here is how the happy path works:
+
+1. thread calls `theLoock.lock()`, acquiring the lock
+2. thread calls `theCondition.await()`
+3. -> thread relinquishes theLock and thread becomes dormant
+4. Some other thread calls `theCondition.signal()`
+5. -> thread tries to re-acquire the lock
+6. -> thread re-acquires the lock and returns from `await()`
+6. 
+
+### Notes on monitors
+
+A *monitor* is really a pattern for using locks or conditional
+variables to protect access to a shared object.
+
+## "Find"
+
+
+Q: Find ReentrantLock supports a fairness parameter. What does it mean
+for a lock to be “fair”? Why might you choose to use a fair lock? Why
+might you not?
+
+A: Fairness or non-fairness determines which thread is most likely to
+acquire the lock when many are blocked and waiting. If fairness=true,
+then the longest waiting thread gets control. This is guaranteed to
+prevent live lock but it reduces overall concurrency.
+
+Q: What is ReentrantReadWriteLock ? How does it differ from
+ReentrantLock ? When might you use it?
+
+A: A ReentrantReadWriteLock provides both a writeLock and a readLock
+which together can be used to allow one writer but multiple
+readers. Only one writing thread can hold the write lock. Many reading
+threads can hold the read lock.
+
+Q: What is a “spurious wakeup”? When can one happen and why doesn’t a
+well- written program care if one does?
+
+A: Spurious wakeups are calls to `signal`, in association with a
+condtion variable, when the condition does not actually hold. Some
+times threads holding locks with condition variables will be awoken by
+`signal` even when no other thread signaled the condition
+obtained. This is called a spurious wake up. Code waiting for signals
+on condition variables needs to handle this correctly, by manually
+checking the condition itself.
+
+Q: What is AtomicIntegerFieldUpdater ? How does it differ from
+AtomicInteger ? When might you use it?
+
+A: it's not an atomic integer field, but an abstract class that acts
+as a factory that creates an object which can be used to atomically
+update a volatile int field of another class.
+
+
+## Do
+
+1. What would happen if the loop within the “dining philosophers”
+   implementation that uses condition variables was replaced with a
+   simple if statement? What failure modes might you see? What would
+   happen if the call to signal was replaced by signalAll ? What
+   problems (if any) would this cause?
+
+If the loop were replaced with a conditional, then the thread could
+incorrectly get the lock due to a spurious wakeup, and proceed even
+tho the condition does not obtain. Since the thread would be running
+code required this precondition to be met, when it was not in fact
+met, this would produce undefined results.
+
+If `signal` were replaced by `signalAll`, then when one philosopher
+put down his chopsticks, not only the philosophers next to him would
+be woken up to try to pick up chopsticks but all 
+
+
+2. Just as intrinsic locks are more limited than ReentrantLock , they
+   also support a more limited type of condition variable. Rewrite the
+   dining philosophers to use an intrinsic lock plus the wait and
+   notify or notifyAll methods. Why is it less efficient than using
+   ReentrantLock ?
+
+
+3. Write a version of ConcurrentSortedList that uses a single lock
+   instead of hand-over-hand locking. Benchmark it against the other
+   version. Does hand- over- hand locking provide any performance
+   advantage? When might it be a good choice? When might it not?
+
+## Minidemoes and miniprojects
+
+## Related Resources
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
