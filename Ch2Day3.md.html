@@ -30,11 +30,16 @@ Still, this seems neat. Why don't we have it?
 
 ### minidemo: CopyOnWriteArray vs Swift.Array
 
-Java's `CopyOnWriteArray` "makes a copy whenever it’s changed". It's part of the concurrency package, so I presume it's threadsafe, and that this means that one thread can modify it while another thread is reading it.
+Java's `CopyOnWriteArray` "makes a copy whenever it’s changed". It's
+part of the concurrency package, so I presume it's threadsafe, and
+that this means that one thread can modify it while another thread is
+reading it.
 
-Swift itself also uses copy-on-write under the hood, to postpone and skip unnecessary data copies. So `Swift.Array` is also copy-on-write.
+Swift itself also uses copy-on-write under the hood, to postpone and
+skip unnecessary data copies. So `Swift.Array` is also copy-on-write.
 
-However, `Swift.Array` is not threadsafe (afaict). What are other *external* differences are there compared to Java's CopyOnWriteArray?
+However, `Swift.Array` is not threadsafe (afaict). What are other
+*external* differences are there compared to Java's CopyOnWriteArray?
 
 
 ### minidemo: blocking queue vs GCD task queue

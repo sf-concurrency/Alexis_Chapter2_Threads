@@ -10,9 +10,14 @@ by Alexis Gallagher. 2018-02-08T2055
 
 Not actually defined in the text.
 
-How does one define this *exactly*? Is there another kind of thread besides a thread of control? The book doesn't actually define it
+How does one define this *exactly*? Is there another kind of thread
+besides a thread of control? The book doesn't actually define it
 
-Seems to mean something like, "a sequence of instructions that will be executed in the same execution context". So perhaps what makes it a thread of "control" is just that a thread is defined by having a single instruction pointer which keeps track of, or controls, the instruction which will be executed next.
+Seems to mean something like, "a sequence of instructions that will be
+executed in the same execution context". So perhaps what makes it a
+thread of "control" is just that a thread is defined by having a
+single instruction pointer which keeps track of, or controls, the
+instruction which will be executed next.
 
 ### “mutual exclusion”
 
@@ -22,19 +27,36 @@ Not actually defined in the text.
 
 Not actually defined in the text.
 
-Why is it called a “condition”? Is it a general state of affairs? Is it specific requirement, as in “one condition of my participation is that I get green M&Ms?” Are you “in” one race condition or another, or is the presence of two possibilities itself what defines a race condition?
+Why is it called a “condition”? Is it a general state of affairs? Is
+it specific requirement, as in “one condition of my participation is
+that I get green M&Ms?” Are you “in” one race condition or another, or
+is the presence of two possibilities itself what defines a race
+condition?
 
-I've never understood what this means exactly. I checked [the Wikipedia article](https://en.wikipedia.org/wiki/Race_condition), and according to it and [this SO answer](https://stackoverflow.com/a/45498041/577888), the term was supposedly introduced in 1968, in an academic article regarding circuit design, which is pdf page 78 in [this file I found online](resources/ZissosCopperwhite-LogicalDesignManual_text). 
+I've never understood what this means exactly. I checked [the
+Wikipedia article](https://en.wikipedia.org/wiki/Race_condition), and
+according to it and [this SO
+answer](https://stackoverflow.com/a/45498041/577888), the term was
+supposedly introduced in 1968, in an academic article regarding
+circuit design, which is pdf page 78 in [this file I found
+online](resources/ZissosCopperwhite-LogicalDesignManual_text).
 
-I checked and the paper doesn't use the term "race condition" anywhere. But it seems to talk about "race phenomena," "hazard phenomena," and "race hazards." Oh, well.
+I checked and the paper doesn't use the term "race condition"
+anywhere. But it seems to talk about "race phenomena," "hazard
+phenomena," and "race hazards." Oh, well.
 
-My own working definition is just that a race condtion is the circumstance when the behavior of a piece of code is undefined because of the absence of needed synchronization between multiple threads.
+My own working definition is just that a race condtion is the
+circumstance when the behavior of a piece of code is undefined because
+of the absence of needed synchronization between multiple threads.
 
 ### “executes concurrently” = ?
 
 Phrase used, but not actually defined.
 
-The one useful thing I remember about saying that two events or processes happen "concurrently" is that it does not mean that they happen at the same time. Rather I believe it can be understood to mean something more like the following:
+The one useful thing I remember about saying that two events or
+processes happen "concurrently" is that it does not mean that they
+happen at the same time. Rather I believe it can be understood to mean
+something more like the following:
 
 - that the time ordering between them is undefined;
 - or equivalently, that the time ordering could turn out to be
@@ -43,77 +65,132 @@ The one useful thing I remember about saying that two events or processes happen
   program, there is _actually no fact of the matter_ regarding time
   ordering.
 
-However, all of the above statements are true only up to the point when the two distinct, incomparable timelines of the processes are brought together and made comparable by a *synchronization primitive* like a lock or something else.
+However, all of the above statements are true only up to the point
+when the two distinct, incomparable timelines of the processes are
+brought together and made comparable by a *synchronization primitive*
+like a lock or something else.
 
-One way to think of it is that, from the point of view of code within a thread, you can compare two moments in that thread and talk about which one came before the other, but *it is not in general meaningful* to talk about whether a moment on this thread is before or after a moment on another thread. You can only talk about this when the two moments are simultaneous because of synchronization primitives, or are ordered by virtue of being on opposite sides of a synchronization primitive.
+One way to think of it is that, from the point of view of code within
+a thread, you can compare two moments in that thread and talk about
+which one came before the other, but *it is not in general meaningful*
+to talk about whether a moment on this thread is before or after a
+moment on another thread. You can only talk about this when the two
+moments are simultaneous because of synchronization primitives, or are
+ordered by virtue of being on opposite sides of a synchronization
+primitive.
 
-Then designing concurrent code is not about keeping track of the time ordering of simultaneous processes but, rather, defining processes that live in these mostly totally unrelated timelines, and specifying the few exceptional points at which they do intersect with each other. It's more about breaking a part one process into independent processes, which meet at rare moments, than it is about keeping track of time as such.
+Then designing concurrent code is not about keeping track of the time
+ordering of simultaneous processes but, rather, defining processes
+that live in these mostly totally unrelated timelines, and specifying
+the few exceptional points at which they do intersect with each
+other. It's more about breaking a part one process into independent
+processes, which meet at rare moments, than it is about keeping track
+of time as such.
 
 I think, but am not sure, that this perspective is valid.
 
-I think I got this idea from [Rob Pike's talk](https://blog.golang.org/concurrency-is-not-parallelism).
+I think I got this idea from [Rob Pike's
+talk](https://blog.golang.org/concurrency-is-not-parallelism).
 
 ### um, what’s a lock?
 
-This is the closest it comes to a definition: “Locks, which can be held by only a single thread at a time”.
+This is the closest it comes to a definition: “Locks, which can be
+held by only a single thread at a time”.
 
-Let us pretend thread is defined. From this definition, we may infer just that a lock is a thing that a thread can "hold". Let us consider it like a talking stick.
+Let us pretend thread is defined. From this definition, we may infer
+just that a lock is a thing that a thread can "hold". Let us consider
+it like a talking stick.
 
 ### “synchronize”
 
 What does this mean?
 
-> The solution is to *synchronize* access to count. One way to do so is to use the *intrinsic lock* that comes built into every Java object (you’ll sometimes hear it referred to as a *mutex*, *monitor*, or *critical section*) by making increment() synchronized:
+> The solution is to *synchronize* access to count. One way to do so
+> is to use the *intrinsic lock* that comes built into every Java
+> object (you’ll sometimes hear it referred to as a *mutex*,
+> *monitor*, or *critical section*) by making increment()
+> synchronized:
 
 ### Acquire locks in a fixed global order
 
-"Happily, there is a simple rule that guarantees you will never deadlock--always acquire locks in a fixed, global order."
+"Happily, there is a simple rule that guarantees you will never
+deadlock--always acquire locks in a fixed, global order."
 
 This sounds worth remembering.
 
 
 ### Avoid “alien methods"
 
-> The problem is that updateProgress() calls an alien method--a method it knows nothing about. That method could do anything, including acquiring another lock. If it does, then we’ve acquired two locks without knowing whether we’ve done so in the right order. As we’ve just seen, that can lead to deadlock.
-The only solution is to avoid calling alien methods while holding a lock.
+> The problem is that updateProgress() calls an alien method--a method
+> it knows nothing about. That method could do anything, including
+> acquiring another lock. If it does, then we’ve acquired two locks
+> without knowing whether we’ve done so in the right order. As we’ve
+> just seen, that can lead to deadlock. The only solution is to avoid
+> calling alien methods while holding a lock.
 
 This seems vague.
 
-Better would be to say, “when your thread is holding a lock it should never call a function with unknown behavior. That is because that function might try to acquire a lock, succeed in acquiring a lock in the wrong locking order with respect to your thread's lock, and thus produce a deadlock."
+Better would be to say, “when your thread is holding a lock it should
+never call a function with unknown behavior. That is because that
+function might try to acquire a lock, succeed in acquiring a lock in
+the wrong locking order with respect to your thread's lock, and thus
+produce a deadlock."
 
 ## "Find"
 
 1. Check out William Pugh’s “Java memory model” website.
    
-This is background material on the discovery of the flaws in the original JVM and its revision.
+This is background material on the discovery of the flaws in the
+original JVM and its revision.
 
 2. Acquaint yourself with the JSR 133 (Java memory model) FAQ.
 
 To quote:
 
->  The proposed specification describes the semantics of threads, locks, volatile variables and data races. This includes what has been referred to as the Java memory model.
+>  The proposed specification describes the semantics of threads,
+>  locks, volatile variables and data races. This includes what has
+>  been referred to as the Java memory model.
 
->  The specification is expected to revise substantially Chapter 17 of "The Java Language Specification" and Chapter 8 of "The Java Virtual Machine Specification". It is not expected to result in changes to existing APIs, but might clarify the semantics of some existing methods in java.lang.Thread and java.lang.Object (java.lang.Object defines the wait and join methods).
+>  The specification is expected to revise substantially Chapter 17 of
+>  "The Java Language Specification" and Chapter 8 of "The Java
+>  Virtual Machine Specification". It is not expected to result in
+>  changes to existing APIs, but might clarify the semantics of some
+>  existing methods in java.lang.Thread and java.lang.Object
+>  (java.lang.Object defines the wait and join methods).
 
-Seems like this was a catch-up to specify undefined semantics around threading and locks, notably, to clarify where the compiler is free to re-order statements, where it guarantees valuels will be fully initialized, when changes made from one thread will be visible from another, etc..
+Seems like this was a catch-up to specify undefined semantics around
+threading and locks, notably, to clarify where the compiler is free to
+re-order statements, where it guarantees valuels will be fully
+initialized, when changes made from one thread will be visible from
+another, etc..
 
 This seems like all the stuff not yet quite specified in Swift.
 
-3a. What guarantees does the Java memory model make regarding initialization safety? 
+3a. What guarantees does the Java memory model make regarding
+initialization safety?
    
-You don't need to explicitly synchronize, if you initiaze all final vars in the constructor. (Is it the same in Swift?)
+You don't need to explicitly synchronize, if you initiaze all final
+vars in the constructor. (Is it the same in Swift?)
 
-3b. Is it always necessary to use locks to safely publish objects between threads?
+3b. Is it always necessary to use locks to safely publish objects
+between threads?
 
     ????
 
-4. What is the double-checked locking anti-pattern? Why is it an anti-pattern?
+4. What is the double-checked locking anti-pattern? Why is it an
+   anti-pattern?
 
-Seems like this was a voodoo cargo cult attempt to ensure threadsafe code before the JVM community nailed down the language spec.
+Seems like this was a voodoo cargo cult attempt to ensure threadsafe
+code before the JVM community nailed down the language spec.
 
 ## Do: Dining Philosophers
 
-> Experiment with the original, broken “dining philosophers” example. Try modifying the length of time that philosophers think and eat and the number of philosophers. What effect does this have on how long it takes until deadlock? Imagine that you were trying to debug this and wanted to increase the likelihood of reproducing the deadlock— what would you do?
+> Experiment with the original, broken “dining philosophers”
+> example. Try modifying the length of time that philosophers think
+> and eat and the number of philosophers. What effect does this have
+> on how long it takes until deadlock? Imagine that you were trying to
+> debug this and wanted to increase the likelihood of reproducing the
+> deadlock— what would you do?
 
 ###  findings
 

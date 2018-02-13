@@ -29,7 +29,11 @@ lock" attached to every object:
 - thread can be interrupted while waiting to acquire lock
 - include a condition variable with a (signal/wait) mechanism.
 
-Insomuch as the ReentrantLock seems to prevent *one* mode of deadlock due to acquiring locks not in the global fixed locking order -- namely, acquiring the same lock twice -- it seems like it can be regarded as a lock with special abilities which reduces the requirements on how it is used.
+Insomuch as the ReentrantLock seems to prevent *one* mode of deadlock
+due to acquiring locks not in the global fixed locking order --
+namely, acquiring the same lock twice -- it seems like it can be
+regarded as a lock with special abilities which reduces the
+requirements on how it is used.
 
 ### Notes on condition variables
 
@@ -92,7 +96,9 @@ locks indirectly but does not need to deal with them directly itself?
 A *monitor* is really a pattern for using locks or conditional
 variables to protect access to a shared object.
 
-It seems like any of those constructs can be called a monitor if it used as a monitor -- that is, if it is used to protect a shared resource from invalid multithreaded access.
+It seems like any of those constructs can be called a monitor if it
+used as a monitor -- that is, if it is used to protect a shared
+resource from invalid multithreaded access.
 
 ## "Find"
 
@@ -158,7 +164,9 @@ be woken up to try to pick up chopsticks but all
    notify or notifyAll methods. Why is it less efficient than using
    ReentrantLock ?
 
-What intrigued me about this question is its implication that every kind of lock gives rise to a different kind of condition variable. Is this true?
+What intrigued me about this question is its implication that every
+kind of lock gives rise to a different kind of condition variable. Is
+this true?
 
 3. Write a version of ConcurrentSortedList that uses a single lock
    instead of hand-over-hand locking. Benchmark it against the other
