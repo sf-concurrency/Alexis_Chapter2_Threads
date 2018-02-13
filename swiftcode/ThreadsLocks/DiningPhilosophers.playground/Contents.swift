@@ -10,7 +10,7 @@
 
  This is an implementation in Swift, of the first Java example, adapted
  for the differences in Cocoa threads. But tbh I'm
- not I'm not sure is objc_sync_enter/exit is implementing the same kind of
+ not sure if objc_sync_enter/exit is implementing the same kind of
  locking as Java's `synchronized` keyword. Seems likely, if
  they're both relying on the same underlying OS construct of pthread
  recursive locks.
