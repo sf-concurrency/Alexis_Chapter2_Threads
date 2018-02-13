@@ -41,13 +41,15 @@ been met. The literal variable is used to support this mechanism.
 To recap the confusables:
 
 - the actual *condition variable* appears in the program code, merely
-  to be used as an argument for the `wait`, `signal`, and `signalAll` (aka, `broadcast`) functions. It
-  does not embody or contain the logical condition.
+  to be used as an argument for the `wait`, `signal`, and `signalAll`
+  (aka, `broadcast`) functions. It does not seem to embody or contain
+  the value used to define the logical condition.
 
 - the *logical condition* is a logical condition defined and managed
   by the program. When it is false, threads should call `wait` on the
   condition variable. When it becomes true, a thread should call
-  `signal` in order to wake up the waiting threads.
+  `signal` in order to wake up the waiting threads. The condition is
+  checked within a block protected by a mutex lock.
 
 - Every condition variable operation must be performed while a *mutex
   lock* is locked. Why? This ensures atomicity of testing the
@@ -65,9 +67,25 @@ Here is how the happy path works:
 
 ### Minidemo: NSCondition vs Java condition variables
 
-Why do the Java ones seem to require to be used only within a synchronized block?
+Why des the Java `Condition` seem to require to be used only within a
+synchronized block? Is `NSCondition` used similarly?
 
-How does this relate to GCD semaphores? 
+This seems complex and error-prone. Is it equivalent to GCD semaphores?
+
+### Minidemo: dining philosophers with NSCondition
+
+### Atomic variables
+
+> Finally, atomic variables are the foundation of non-blocking,
+> lock-free algo- rithms, which achieve synchronization without locks
+> or blocking.
+
+But does not an atomic variable itself block if you try to modify it
+while another thread is also trying to?
+
+Does a lock-free algorithm just mean that the algorithm relies on on
+locks indirectly but does not need to deal with them directly itself?
+
 
 ### Notes on monitors
 
@@ -79,7 +97,7 @@ It seems like any of those constructs can be called a monitor if it used as a mo
 ## "Find"
 
 
-Q: Find ReentrantLock supports a fairness parameter. What does it mean
+Q: Find `ReentrantLock` supports a fairness parameter. What does it mean
 for a lock to be “fair”? Why might you choose to use a fair lock? Why
 might you not?
 
@@ -88,10 +106,10 @@ acquire the lock when many are blocked and waiting. If fairness=true,
 then the longest waiting thread gets control. This is guaranteed to
 prevent live lock but it reduces overall concurrency.
 
-Q: What is ReentrantReadWriteLock ? How does it differ from
-ReentrantLock ? When might you use it?
+Q: What is `ReentrantReadWriteLock`? How does it differ from
+`ReentrantLock` ? When might you use it?
 
-A: A ReentrantReadWriteLock provides both a writeLock and a readLock
+A: A `ReentrantReadWriteLock` provides both a writeLock and a readLock
 which together can be used to allow one writer but multiple
 readers. Only one writing thread can hold the write lock. Many reading
 threads can hold the read lock.
@@ -107,8 +125,8 @@ obtained. This is called a spurious wake up. Code waiting for signals
 on condition variables needs to handle this correctly, by manually
 checking the condition itself.
 
-Q: What is AtomicIntegerFieldUpdater ? How does it differ from
-AtomicInteger ? When might you use it?
+Q: What is `AtomicIntegerFieldUpdater` ? How does it differ from
+`AtomicInteger` ? When might you use it?
 
 A: it's not an atomic integer field, but an abstract class that acts
 as a factory that creates an object which can be used to atomically

@@ -1,0 +1,73 @@
+<meta charset="utf-8">
+
+# SCM: Ch2,Day3
+
+## Reading Notes by AlexisGallagher
+
+Java `ExecutorService`. This seems like the poor man's GCD. You can
+hand it a class which is basically boilerplate for a closure, and then
+it will queue it or run it, managing a thread pool.
+
+`CopyOnWriteArrayList` is a COW array. Interesting
+
+### Producer-consumer and BlockingQueue
+
+Breaks parsing problem into two loops, each running in its own thread,
+communicating via a `BlockingQueue`.
+
+A blocking queue blocks when it is full, thus blocking a producer
+that's going to fast. This is *backpressure*.
+
+This pattern is neat but it seems to require a lot of error-prone
+boilerplate to define the producer and consumer loops, and especially
+to define special values that stop the loops.
+
+Still, this seems neat. Why don't we have it?
+
+
+### ConcurrentHashMap
+
+
+### minidemo: CopyOnWriteArray vs Swift.Array
+
+Java's `CopyOnWriteArray` "makes a copy whenever it’s changed". It's part of the concurrency package, so I presume it's threadsafe, and that this means that one thread can modify it while another thread is reading it.
+
+Swift itself also uses copy-on-write under the hood, to postpone and skip unnecessary data copies. So `Swift.Array` is also copy-on-write.
+
+However, `Swift.Array` is not threadsafe (afaict). What are other *external* differences are there compared to Java's CopyOnWriteArray?
+
+
+### minidemo: blocking queue vs GCD task queue
+
+Would it be sensible to use a task queue to build a blocking value queue?
+
+
+### minidemo: ConcurrentHashMap in Swift
+
+
+## Find
+
+Q: The documentation for ForkJoinPool—how does a fork/join pool differ
+from a thread pool? When might you prefer one, and when the other?
+
+Q: What is work-stealing and when might it be useful? How would you
+implement work-stealing with the facilities provided by
+java.util.concurrent?
+
+Q: What is the difference between a CountDownLatch and a
+CyclicBarrier? When might you use one, and when the other?
+
+Q: What is Amdahl’s law? What does it say about the maximum
+theoretical speedup we might be able to get for our word-counting
+algorithm?
+
+
+
+## Do
+
+## Minidemoes and miniprojects
+
+## Related Resources
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js"></script><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
