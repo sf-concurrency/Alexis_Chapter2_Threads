@@ -28,6 +28,8 @@ I've never understood what this means exactly. I checked [the Wikipedia article]
 
 I checked and the paper doesn't use the term "race condition" anywhere. But it seems to talk about "race phenomena," "hazard phenomena," and "race hazards." Oh, well.
 
+My own working definition is just that a race condtion is the circumstance when the behavior of a piece of code is undefined because of the absence of needed synchronization between multiple threads.
+
 ### “executes concurrently” = ?
 
 Phrase used, but not actually defined.
@@ -53,13 +55,21 @@ I think I got this idea from [Rob Pike's talk](https://blog.golang.org/concurren
 
 ### um, what’s a lock?
 
-“Locks, which can be held by only a single thread at a time”
+This is the closest it comes to a definition: “Locks, which can be held by only a single thread at a time”.
+
+Let us pretend thread is defined. From this definition, we may infer just that a lock is a thing that a thread can "hold". Let us consider it like a talking stick.
 
 ### “synchronize”
 
 What does this mean?
 
 > The solution is to *synchronize* access to count. One way to do so is to use the *intrinsic lock* that comes built into every Java object (you’ll sometimes hear it referred to as a *mutex*, *monitor*, or *critical section*) by making increment() synchronized:
+
+### Acquire locks in a fixed global order
+
+"Happily, there is a simple rule that guarantees you will never deadlock--always acquire locks in a fixed, global order."
+
+This sounds worth remembering.
 
 
 ## "Find"
