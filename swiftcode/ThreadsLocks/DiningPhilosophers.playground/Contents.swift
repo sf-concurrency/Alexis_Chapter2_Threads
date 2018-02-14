@@ -64,7 +64,7 @@ class Philosopher : Thread
 
   override func main()
   {
-    print("Philosopher \(self) starting")
+    print("\(self.philsopherName) starting")
     /*
      Instead of running until stopped by an exception like
      java.lang.Thread, every Foundation.Thread object has a
@@ -73,7 +73,7 @@ class Philosopher : Thread
     while !self.isCancelled {
       self.thinkCount += 1
       if self.thinkCount % 10 == 0 {
-        print("Philosopher \(self) has thought \(self.thinkCount) times")
+        print("\(self.philsopherName) has thought \(self.thinkCount) times")
       }
       Thread.sleep(forTimeInterval: randomIntervalUnderOneSecond() )
 
@@ -95,8 +95,14 @@ class Philosopher : Thread
       objc_sync_exit(right)
       objc_sync_exit(left)
     }
-    print("Philosopher \(self) finishing")
+    print("\(self.philsopherName) finishing")
+  }
+}
 
+extension Philosopher {
+  var philsopherName: String {
+    let address:String = NSString(format: "%p", self) as String
+    return "Philosopher(\(address))"
   }
 }
 
