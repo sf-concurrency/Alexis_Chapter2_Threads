@@ -22,9 +22,12 @@
 
  */
 
-
 import Foundation
 import PlaygroundSupport
+
+
+let numChopsticks:Int = 2
+let numPhilosopehrs:Int = 4
 
 /**
  Represents a particular chopstick.
@@ -75,6 +78,7 @@ class Philosopher : Thread
       if self.thinkCount % 10 == 0 {
         print("\(self.philsopherName) has thought \(self.thinkCount) times")
       }
+      print("\(self.philsopherName) is thinking")
       Thread.sleep(forTimeInterval: randomIntervalUnderOneSecond() )
 
       /*
@@ -89,11 +93,20 @@ class Philosopher : Thread
        There are also non-reentrant, non-recursive locks.
 
        */
+      print("\(self.philsopherName) is trying to get left chopstick=\(self.left.id)")
       objc_sync_enter(self.left)
+      print("\(self.philsopherName) had got left chopstick=\(self.left.id)")
+
+      print("\(self.philsopherName) is trying to get right chopstick=\(self.right.id)")
       objc_sync_enter(self.right)
+      print("\(self.philsopherName) has got right chopstick=\(self.right.id)")
+
+      print("\(self.philsopherName) is eating with left chopstick=\(self.left.id) and right chopstick=\(self.right.id)")
       Thread.sleep(forTimeInterval: randomIntervalUnderOneSecond() )
       objc_sync_exit(right)
+      print("\(self.philsopherName) has released right chopstick=\(self.right.id)")
       objc_sync_exit(left)
+      print("\(self.philsopherName) has released left chopstick=\(self.left.id)")
     }
     print("\(self.philsopherName) finishing")
   }
@@ -108,10 +121,13 @@ extension Philosopher {
 
 func startDining()
 {
-  let chopsticks:[Chopstick] = (0..<5).map(Chopstick.init)
+  var chopsticks:[Chopstick] = []
+  for i in 0..<numChopsticks {
+    chopsticks.append(Chopstick(id: Int8(i)))
+  }
 
-  let philosophers = (0..<5).map {
-    return Philosopher(left: chopsticks[$0], right: chopsticks[($0 + 1) % 5])
+  let philosophers = (0..<numPhilosopehrs).map {
+    return Philosopher(left: chopsticks[$0 % numChopsticks], right: chopsticks[($0 + 1) % numChopsticks])
   }
 
   for philosopher in philosophers {
